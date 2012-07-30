@@ -43,6 +43,7 @@ $o->path = $accesspath;
 $users = $appEngine->getAccessPathViewProvider()->getUsersOfPath($o);
 $groups = $appEngine->getAccessPathViewProvider()->getGroupsOfPath($o);
 
+
 // Data to assign new user permissions.
 // Data to assign new group permissions.
 if ($appEngine->isAccessPathEditActive() && $appEngine->checkUserAccess(ACL_MOD_ACCESSPATH, ACL_ACTION_ASSIGN))

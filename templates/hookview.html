@@ -1,0 +1,20 @@
+[{INCLUDE templates/header.html}]
+[{IFDEF INFO}]<div class="infomsg">${INFOMSG}</div>[{/IFDEF}]
+[{IFDEF WARNING}]<div class="warningmsg">${WARNINGMSG}</div>[{/IFDEF}]
+[{IFDEF ERROR}]<div class="errormsg">${ERRORMSG}</div>[{/IFDEF}]
+
+
+<h1>TR{Hook management}}</h1>
+<p class="hdesc">TR{On this page you can view selected Hook and  edit it.}}</p>
+
+<h2>Hook: ${hooktitle}</h2>
+<form action="hookview.php?h=${hookid}" method="post">
+    <label><b>TR{Content:}}</b></label><br/>
+    <textarea name="content" rows="20" cols="200" class="lineedit">${hookcontent}</textarea><br />
+    [{IFDEF ACL_hooks_add}]
+    <input type="submit" name="update" value="TR{Update}}" class="delbtn" onclick="return deletionPrompt('TR{Are you sure?}}');" />
+    [{/IFDEF}]
+</form>
+
+
+[{INCLUDE templates/footer.html}]

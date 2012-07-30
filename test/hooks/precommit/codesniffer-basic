@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#@title Unister Coding Standard (Basis)
+#@author r.lasinski
+
+REPOS="$1"
+TXN="$2"
+
+/data/r.lasinski/pear/bin/scripts/phpcs-svn-pre-commit --standard=UnisterPHP --extensions=php "$REPOS" -t "$TXN" >&2 || exit 1
+
+exit 0

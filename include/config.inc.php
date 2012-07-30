@@ -112,6 +112,7 @@ define("ACL_MOD_ROLE",                 "roles");
 define("ACL_MOD_SETTINGS",             "settings");
 define("ACL_MOD_UPDATE",               "updates");
 define("ACL_MOD_PROJECTMANAGER",       "projectmanagers");
+define("ACL_MOD_HOOKS",       		   "hooks");
 
 /**
  * Constant ACL actions.

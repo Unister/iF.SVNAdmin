@@ -1,0 +1,21 @@
+#!/bin/sh
+
+#@title Comment (2 Chars)
+#@author r.lasinski
+
+REPOS="$1"
+TXN="$2"
+MINLOGLENGTH=2
+
+SVNLOOK="/usr/bin/svnlook"
+LOGMSG=$($SVNLOOK log -t "$TXN" "$REPOS" 2>/dev/null | grep "[a-zA-Z0-9]" | wc -c)
+
+if [ "$LOGMSG" -lt $MINLOGLENGTH ]; then
+echo "\n***********************************" 1>&2
+echo "Please provide a meaningful comment ($LOGMSG < $MINLOGLENGTH) when committing changes." 1>&2
+echo "***********************************\n" 1>&2
+
+exit 1
+fi
+
+exit 0

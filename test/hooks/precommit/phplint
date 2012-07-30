@@ -1,0 +1,42 @@
+#!/bin/bash
+
+#@title PHP Syntax Check
+#@author r.lasinski
+
+directory=`dirname $0`
+source $directory/../functions/common
+
+REPOS="$1"
+TXN="$2"
+ERROR=0
+
+PHP="/usr/bin/php"
+SVNLOOK="/usr/bin/svnlook"
+AWK="/usr/bin/awk"
+GREP="/bin/egrep"
+SED="/bin/sed"
+
+function checkPHPSyntax()
+{
+    if [ -z "$1" ]; then
+        printMessage "Usage: checkPHPSyntax <FILE>"
+        exit 1
+    fi
+
+    FILE="$1"
+    if [ ! -z "$(echo $FILE | $GREP \\.\(php\|phtml\)$)" ]; then
+        MESSAGE=$($SVNLOOK cat -t "$TXN" "$REPOS" "$FILE" 2>/dev/null | $PHP -l 2>&1)
+        if [ $? -ne 0 ]; then
+            printError "$(echo "$MESSAGE" | $SED "s| -| $FILE|g")"
+        fi
+    fi
+}
+
+#check Commited files
+CHANGED=$($SVNLOOK changed -t "$TXN" "$REPOS" 2>/dev/null | $GREP "^[U|A]" | $AWK '{print $2}')
+for FILE in $CHANGED; do
+    checkPHPSyntax "$FILE"
+done
+
+# Exit with 0 if no errors, 1 if errors
+exit $ERROR

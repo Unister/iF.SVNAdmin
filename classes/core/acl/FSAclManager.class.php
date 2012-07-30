@@ -2,7 +2,7 @@
 namespace svnadmin\core\acl
 {
   /**
-   * 
+   *
    * Manages the permission of roles to different modules.
    * @author Manuel Freiholz
    *
@@ -21,13 +21,13 @@ namespace svnadmin\core\acl
      * @var IF_ACL
      */
     private $acl;
-    
+
     /**
      * Holds the path to the user-role-assignment-file.
      * @var string
      */
     private $user_role_file;
-    
+
     /**
      * Holds the parsed data of the $user_role_file.
      * @var array
@@ -108,7 +108,7 @@ namespace svnadmin\core\acl
     {
       // Get roles of user.
       $roles = self::getRolesOfUser($objUser);
-      
+
       // Check all roles for permission, until one has the permission.
       foreach ($roles as &$roleObj)
       {
@@ -133,6 +133,9 @@ namespace svnadmin\core\acl
         $tmpAcl->addRule($n, \ACL_MOD_ACCESSPATH, array(\ACL_ACTION_UNASSIGN));
         $tmpAcl->addRule($n, \ACL_MOD_REPO, array(\ACL_ACTION_VIEW));
         $tmpAcl->addRule($n, \ACL_MOD_PROJECTMANAGER, array(\ACL_ACTION_VIEW));
+        $tmpAcl->addRule($n, \ACL_MOD_HOOKS, array(\ACL_ACTION_VIEW));
+        $tmpAcl->addRule($n, \ACL_MOD_HOOKS, array(\ACL_ACTION_ASSIGN));
+        $tmpAcl->addRule($n, \ACL_MOD_HOOKS, array(\ACL_ACTION_UNASSIGN));
 
         if ($tmpAcl->hasPermission($this->project_admin_role_name, $module, $action))
           return true;
@@ -322,7 +325,7 @@ namespace svnadmin\core\acl
       }
       return $list;
     }
-    
+
     /**
      * Gets all project managers of the given $path.
      * @param $path The Access-Path.
@@ -330,30 +333,30 @@ namespace svnadmin\core\acl
      */
     public function getUsersOfAccessPath($path)
     {
-    	$list = array();
-    	if ($this->assignments == null)
-    	  return $list;
-    	  
-    	// Iterate all AccessPaths sections and search for matching of $path.
-    	foreach ($this->assignments as $sec => &$key)
-    	{
-    		$pos = null;
-    		if (($pos=strpos($sec, $this->path_postfix)) !== false)
-    		{
-    			$idx = 0;
-    			while (isset($this->assignments[$sec][$idx]))
-    			{
-    				if ($this->assignments[$sec][$idx] == $path)
-    				{
-    					// Extract username from section head.
-    					$username = substr($sec, 0, $pos);
-    					$list[] = $username;
-    				}
-    				$idx++;
-    			}
-    		}
-    	}
-    	return $list;
+        $list = array();
+        if ($this->assignments == null)
+          return $list;
+
+        // Iterate all AccessPaths sections and search for matching of $path.
+        foreach ($this->assignments as $sec => &$key)
+        {
+            $pos = null;
+            if (($pos=strpos($sec, $this->path_postfix)) !== false)
+            {
+                $idx = 0;
+                while (isset($this->assignments[$sec][$idx]))
+                {
+                    if ($this->assignments[$sec][$idx] == $path)
+                    {
+                        // Extract username from section head.
+                        $username = substr($sec, 0, $pos);
+                        $list[] = $username;
+                    }
+                    $idx++;
+                }
+            }
+        }
+        return $list;
     }
 
     /**
@@ -419,6 +422,31 @@ namespace svnadmin\core\acl
       return $list;
     }
 
+    public function filterRepositoryList($username, $fullList)
+    {
+      $list = array();
+      foreach ($fullList as &$pathObj)
+      {
+        if (self::isUserAdminOfPath($username, $pathObj->name . ':/'))
+        {
+          $list[] = $pathObj;
+        }
+      }
+      return $list;
+    }
+
+    public function filterUserList($username, $fullList)
+    {
+        $list = array();
+        foreach ($fullList as $user) {
+            if (!($user->getName() == $username)) {
+                $list[] = $user;
+            }
+        }
+
+        return $list;
+    }
+
     /**
      * Sets the project administrator for an access-path.
      * @param string $accesspath
@@ -475,7 +503,7 @@ namespace svnadmin\core\acl
           $this->assignments[$section][$i] = $list[$i];
         }
       }
-      
+
       return true;
     }
 
@@ -546,16 +574,16 @@ namespace svnadmin\core\acl
      */
     public function load()
     {
-    	// Create the user-to-role file.
-    	if (!file_exists($this->user_role_file))
-    	{
-    		// Create the file.
-    		if (!touch($this->user_role_file))
-    		{
-    		  throw new Exception("The file is not writable: ".$this->user_role_file);
-    		}
-    	}
-    	
+        // Create the user-to-role file.
+        if (!file_exists($this->user_role_file))
+        {
+            // Create the file.
+            if (!touch($this->user_role_file))
+            {
+              throw new Exception("The file is not writable: ".$this->user_role_file);
+            }
+        }
+
       // Load the default ACL object.
       $this->acl = self::getDefaultAcl();
 
@@ -579,12 +607,13 @@ namespace svnadmin\core\acl
       $o->addModule(new \IF_ACLModule(\ACL_MOD_UPDATE));
       $o->addModule(new \IF_ACLModule(\ACL_MOD_SETTINGS));
       $o->addModule(new \IF_ACLModule(\ACL_MOD_PROJECTMANAGER));
+      $o->addModule(new \IF_ACLModule(\ACL_MOD_HOOKS));
 
       // Basic user (Default role)
       $n = "User";
       $o->addRole(new \IF_ACLRole($n, "Can login and change the own password."));
       $o->addRule($n, \ACL_MOD_BASIC, array(\ACL_ACTION_LOGIN));
-      $o->addRule($n, \ACL_MOD_USER, array(\ACL_ACTION_CHANGEPASS));
+      //$o->addRule($n, \ACL_MOD_USER, array(\ACL_ACTION_CHANGEPASS));
 
       // User-Group-Administrator (inhertis "User")
       $n = "User-Group-Manager";
@@ -610,6 +639,9 @@ namespace svnadmin\core\acl
       $o->addRule($n, \ACL_MOD_ACCESSPATH, array(\ACL_ACTION_ASSIGN));
       $o->addRule($n, \ACL_MOD_ACCESSPATH, array(\ACL_ACTION_UNASSIGN));
       $o->addRule($n, \ACL_MOD_REPO, array(\ACL_ACTION_VIEW));
+      $o->addRule($n, \ACL_MOD_HOOKS, array(\ACL_ACTION_VIEW));
+      $o->addRule($n, \ACL_MOD_HOOKS, array(\ACL_ACTION_ASSIGN));
+      $o->addRule($n, \ACL_MOD_HOOKS, array(\ACL_ACTION_UNASSIGN));
 
       // Repository-Creator
       $n = "Repository-Creator";

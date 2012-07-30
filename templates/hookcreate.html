@@ -1,0 +1,27 @@
+[{INCLUDE templates/header.html}]
+[{IFDEF INFO}]<div class="infomsg">${INFOMSG}</div>[{/IFDEF}]
+[{IFDEF WARNING}]<div class="warningmsg">${WARNINGMSG}</div>[{/IFDEF}]
+[{IFDEF ERROR}]<div class="errormsg">${ERRORMSG}</div>[{/IFDEF}]
+
+<h1>TR{Create Hook}}</h1>
+<p class="hdesc">TR{Create a new hook.}}</p>
+<div class="formdiv">
+  <form method="POST" action="hookcreate.php">
+    <label>Type</label><br/>
+    <select name="type" >
+        <option value="0">TR{Choose type}}</option>
+        <option value="precommit">Pre-Commit</option>
+        <option value="postcommit">Post-Commit</option>
+    </select>
+    <p class="hdesc">TR{Type will be prepend on the Name + "-"}}</p>
+    <label for="hookfilename">TR{Filename}}:</label><br>
+    <input type="text" name="hookfilename" id="hookfilename"  class="lineedit"><br>
+    <label for="hookcontent">TR{Content}}:</label><br>
+    <textarea name="hookcontent" id="hookcontent" rows="20" cols="200" class="lineedit"></textarea>
+    <div class="formsubmit">
+      <input type="submit" name="create" value="TR{Create}}" class="addbtn">
+    </div>
+  </form>
+</div>
+
+[{INCLUDE templates/footer.html}]

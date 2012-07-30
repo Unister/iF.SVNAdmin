@@ -1,0 +1,5 @@
+#@title Publish changes to ReviewBoard
+#@author r.lasinski
+
+echo "REVIEWBOARD" >&2
+exit 1

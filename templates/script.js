@@ -27,7 +27,7 @@ function str_trim(text)
 
 /**
  * Inserts alternate row colors to the given table.
- * 
+ *
  * @param eTable The table Element
  * @return void
  */
@@ -54,7 +54,7 @@ function alternateRowColors( eTable ){
 
 /**
  * Searches for all "datatables" and alternates the row colors of them.
- * 
+ *
  * @return void
  */
 function highlightDatatables(){
@@ -100,7 +100,7 @@ function getVisibleTextFromElement(node)
 /**
  * Searches in the given datatable identified by 'tableid' for the
  * text 'text' and hides all other rows in the table-tbody.
- * 
+ *
  * @param tableid
  * @param colidx (not longer used)
  * @param text
@@ -119,20 +119,20 @@ function filterDataTable( tableid, colidx, text )
   // The table element.
   var table = document.getElementById(tableid);
   if (!table){
-	  return;
+      return;
   }
-  
+
   // Get the table body.
   var bodies = table.getElementsByTagName("TBODY");
   if (bodies.length < 1){
     return;
   }
   var tbody = bodies[bodies.length-1]; // Always use the last found body tag!
-  
+
   // All row objects of the table.
   var rows = tbody.getElementsByTagName("TR");
   if (!rows){
-	  return;
+      return;
   }
 
   // Go through all rows and get text from each cell.
@@ -166,7 +166,7 @@ function filterDataTable( tableid, colidx, text )
 /**
  * Opens a dialog which ask the user, whether he really wants to delete
  * selected sources.
- * 
+ *
  * @param question
  * @returns bool
  */
@@ -180,12 +180,12 @@ function deletionPrompt(question) {
 
 /**
  * Selects all checkboxes in a table.
- * 
+ *
  * Change by Sean Chan:
  *  Only selects visible rows.
  *  The checkboxes must be in a table cell, because the function checks,
  *  whether the parent row (TR) tag is visible.
- * 
+ *
  * @param srcObj The "select-all" checkbox.
  * @param targetCheckBoxName The name of the other checkboxes.
  */
@@ -222,7 +222,7 @@ function flashElement(elem)
 
 /**
  * Executes an test of the given settings-section.
- * 
+ *
  * @param testSection The section to test.
  * @param requestVars The variables which are required for an successful test.
  * @param resultContainer The id of the container, which will contain the result.
@@ -291,7 +291,7 @@ function testSettings(testSection, params, resultContainer)
  * This function should be called with any change of the provider types.
  * It handles the logic of possible combinations and updates the user interface.
  * On this way the user can not make a wrong configuration.
- * 
+ *
  * @return void
  */
 function updateSettingsSelection()
