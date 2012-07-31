@@ -1,3 +1,5 @@
 config.ini
 userroleassignments.ini
 ldap.cache.json
+/config-alt.ini
+/config-alt2.ini

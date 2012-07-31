@@ -32,23 +32,45 @@ use svnadmin\core\Engine;
     );
 
     /**
-     * Name der HookDatei
+     * Id of Hook
      * @var string
      */
     public $id;
+
+    /**
+     * Name of Hookfile
+     * @var string
+     */
     public $filename;
 
+    /**
+     * Author of Hook
+     * @var string
+     */
     public $author;
+
+    /**
+     * Title of Hook
+     * @var string
+     */
     public $title;
 
+    /**
+     * Is Hook checked
+     * @var boolean
+     */
     public $checked = false;
 
     /**
-     * Inhalt der Hookdatei
+     * Content of Hook
      * @var string
      */
     public $content;
 
+    /**
+     * Type of Hook (pre/post-commit)
+     * @var string
+     */
     public $type = null;
 
     /**
@@ -142,6 +164,10 @@ use svnadmin\core\Engine;
         return $this->type;
     }
 
+    /**
+     * Get all available hooks
+     * @return array <\svnadmin\core\entities\Hook>
+     */
     public function getHookList()
     {
         $preHookList = glob($this->hookpath . '/'.self::TYPE_PRECOMMIT.'/*');
@@ -165,6 +191,17 @@ use svnadmin\core\Engine;
         return realpath($this->hookpath . DIRECTORY_SEPARATOR . $this->type) . DIRECTORY_SEPARATOR . $this->filename;
     }
 
+    public function getName()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Update hook content
+     *
+     * @param string $data
+     * @return boolean
+     */
     public function update($data)
     {
         $filename = $this->getFilename();
@@ -183,11 +220,20 @@ use svnadmin\core\Engine;
         return false;
     }
 
+    /**
+     * Remove hook file
+     *
+     * @return boolean
+     */
     public function delete()
     {
         return unlink($this->getFilename());
     }
 
+    /**
+     * Check whether hook is checked
+     * @return string|NULL
+     */
     public function getChecked()
     {
         if ($this->checked) {
@@ -196,10 +242,14 @@ use svnadmin\core\Engine;
         return null;
     }
 
+    public function getEncodedName()
+    {
+        return rawurlencode($this->name);
+    }
+
     public static function compare( $o1, $o2 )
     {
-      if( $o1->name == $o2->name )
-      {
+      if ( $o1->name == $o2->name ) {
         return 0;
       }
       return ($o1->name > $o2->name) ? +1 : -1;

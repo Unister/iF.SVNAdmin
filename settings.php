@@ -65,6 +65,7 @@ $pSVNUserDigestFile = get_request_var("SVNUserDigestFile");
 $pSVNDigestRealm = get_request_var("SVNDigestRealm");
 $pSVNParentPath = get_request_var("SVNParentPath");
 $pSvnExecutable = get_request_var("SvnExecutable");
+$pSvnHookpath = get_request_var("SvnHookpath");
 $pSvnAdminExecutable = get_request_var("SvnAdminExecutable");
 $pLdapHostAddress = get_request_var("LdapHostAddress");
 $pLdapProtocolVersion = get_request_var("LdapProtocolVersion");
@@ -111,6 +112,7 @@ if (check_request_var("save"))
 	$cfgEngine->setValue("Repositories:svnclient", "SVNParentPath", $pSVNParentPath);
 	$cfgEngine->setValue("Repositories:svnclient", "SvnExecutable", $pSvnExecutable);
 	$cfgEngine->setValue("Repositories:svnclient", "SvnAdminExecutable", $pSvnAdminExecutable);
+	$cfgEngine->setValue("Repositories:svnclient", "SvnHookpath", $pSvnHookpath);
 	$cfgEngine->setValue("Ldap", "HostAddress", $pLdapHostAddress);
 	$cfgEngine->setValue("Ldap", "ProtocolVersion", $pLdapProtocolVersion);
 	$cfgEngine->setValue("Ldap", "BindDN", $pLdapBindDN);
@@ -207,7 +209,17 @@ if (check_request_var("dotest") && check_request_var("dotestsec"))
 				$msgErr = $appTR->tr("The folder does not exist.");
 			break;
 
-
+		case "SvnHookpath" :
+		    if (file_exists($pSvnHookpath)) {
+		        if (is_writable($pSvnHookpath)) {
+		            $msgOk = $appTR->tr("Test passed.");
+		        } else {
+		            $msgErr = $appTR->tr("The folder exists but is not writable.");
+		        }
+		    } else {
+		        $msgErr = $appTR->tr("The folder does not exist.");
+		    }
+		    break;
 		case "SvnExecutable":
 			if (file_exists($pSvnExecutable))
 				if (is_executable($pSvnExecutable))
@@ -524,12 +536,16 @@ $svnExecutable = $cfgEngine->getValue("Repositories:svnclient","SvnExecutable");
 $svnExecutableEx = $cfgTpl->getValue("Repositories:svnclient","SvnExecutable");
 $svnAdminExecutable = $cfgEngine->getValue("Repositories:svnclient","SvnAdminExecutable");
 $svnAdminExecutableEx = $cfgTpl->getValue("Repositories:svnclient","SvnAdminExecutable");
+$svnHookPath = $cfgEngine->getValue("Repositories:svnclient", 'SvnHookpath');
+$svnHookPathEx = $cfgTpl->getValue("Repositories:svnclient","SvnHookpath");
 SetValue("SVNParentPath", $svnParentPath);
 SetValue("SVNParentPathEx", $svnParentPathEx);
 SetValue("SvnExecutable", $svnExecutable);
 SetValue("SvnExecutableEx", $svnExecutableEx);
 SetValue("SvnAdminExecutable", $svnAdminExecutable);
 SetValue("SvnAdminExecutableEx", $svnAdminExecutableEx);
+SetValue("SvnHookpath", $svnHookPath);
+SetValue("SvnHookpathEx", $svnHookPathEx);
 
 // LDAP connection.
 $ldapHostAddress = $cfgEngine->getValue("Ldap","HostAddress");

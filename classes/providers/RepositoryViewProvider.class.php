@@ -32,7 +32,7 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 	 * @var \IF_SVNClientC
 	 */
 	private $_svnClient = NULL;
-	
+
 	/**
 	 * Holds multiple repository configurations.
 	 * e.g.: array(
@@ -61,19 +61,19 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 	{
 		$engine = \svnadmin\core\Engine::getInstance();
 		$config = $engine->getConfig();
-		
+
 		// Subversion class for browsing.
 		$this->_svnClient = new \IF_SVNClientC($engine->getConfig()
 				->getValue('Repositories:svnclient', 'SvnExecutable'));
-		
+
 		// Load default repository location configuration.
 		$defaultSvnParentPath = $engine->getConfig()
 				->getValue('Repositories:svnclient', 'SVNParentPath');
-		
+
 		// Set as default.
 		$this->_config[0]['SVNParentPath'] = $defaultSvnParentPath;
 		$this->_config[0]['description'] = 'Repositories';
-		
+
 		// Issue #5: Support multiple path values for SVNParentPath
 		// Try to load more repository locations.
 		$index = (int) 1;
@@ -85,12 +85,12 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 			else {
 				break;
 			}
-			
+
 			$description = $config->getValue('Repositories:svnclient:' . $index, 'Description');
 			if ($description != null) {
 				$this->_config[$index]['description'] = $description;
 			}
-			
+
 			++$index;
 		}
 	}
@@ -134,7 +134,7 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 	{
 		return false;
 	}
-	
+
 	/**
 	 * (non-PHPdoc)
 	 * @see svnadmin\core\interfaces.IRepositoryViewProvider::getRepositoryParents()
@@ -142,7 +142,7 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 	public function getRepositoryParents()
 	{
 		$ret = array();
-		
+
 		foreach ($this->_config as $parentIdentifier => $options) {
 			$ret[] = new \svnadmin\core\entities\RepositoryParent(
 					$parentIdentifier,
@@ -150,7 +150,7 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 					$this->getRepositoryParentConfigValue($parentIdentifier, 'description')
 				);
 		}
-		
+
 		return $ret;
 	}
 
@@ -161,18 +161,18 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 	public function getRepositories()
 	{
 		$ret = array();
-		
+
 		foreach ($this->_config as $parentIdentifier => $options) {
 			$list = $this->_svnClient->listRepositories($options['SVNParentPath']);
-			
+
 			foreach ($list as $name) {
 				$ret[] = new \svnadmin\core\entities\Repository($name, $parentIdentifier);
 			}
 		}
-		
+
 		return $ret;
 	}
-	
+
 	/**
 	 * (non-PHPdoc)
 	 * @see svnadmin\core\interfaces.IRepositoryViewProvider::getRepositoriesOfParent()
@@ -180,16 +180,16 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 	public function getRepositoriesOfParent(\svnadmin\core\entities\RepositoryParent $parent)
 	{
 		$ret = array();
-		
+
 		$svnParentPath = $this->getRepositoryParentConfigValue($parent->identifier);
 		if ($svnParentPath != NULL) {
 			$list = $this->_svnClient->listRepositories($svnParentPath);
-			
+
 			foreach ($list as $name) {
 				$ret[] = new \svnadmin\core\entities\Repository($name, $parent->identifier);
 			}
 		}
-		
+
 		return $ret;
 	}
 
@@ -202,7 +202,7 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 		// Get SVNParentPath of given Repository object.
 		$svnParentPath = $this->getRepositoryParentConfigValue(
 				$oRepository->getParentIdentifier(), 'SVNParentPath');
-		
+
 		// Absolute path to the repository.
 		$repo = $svnParentPath . '/' . $oRepository->name;
 
@@ -236,10 +236,10 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 
 		return $ret;
 	}
-	
+
 	/**
 	 * Gets the configuration value associated to the given $parentIdentifier.
-	 * 
+	 *
 	 * @param string $parentIdentifier
 	 * @param string $key
 	 * @return string
@@ -256,7 +256,7 @@ class RepositoryViewProvider implements \svnadmin\core\interfaces\IRepositoryVie
 				$v = $this->_config[$parentIdentifier][$key];
 			}
 		}
-		
+
 		return $v;
 	}
 }

@@ -39,10 +39,17 @@ $appTR->loadModule("repositoryview");
 $varParentIdentifierEnc = get_request_var('pi');
 $varRepoEnc = get_request_var('r');
 $varPathEnc = get_request_var('p');
+$changeHook = check_request_var('changeHook');
 
 $varParentIdentifier = rawurldecode($varParentIdentifierEnc);
 $varRepo = rawurldecode($varRepoEnc);
 $varPath = rawurldecode($varPathEnc);
+
+$hook =  new \svnadmin\core\entities\Hook();
+$hookList = $hook->getHookList();
+if ($changeHook) {
+    $appEngine->handleAction("changehook_repository");
+}
 
 //
 // View Data
@@ -51,6 +58,18 @@ $varPath = rawurldecode($varPathEnc);
 $oR = new \svnadmin\core\entities\Repository($varRepo, $varParentIdentifier);
 
 try {
+    // get enabled Hooks of this Repo
+    $hooksEnabled = $oR->getLoadedHooks();
+    $hooks = array_merge($hookList['precommit'], $hookList['postcommit']);
+    
+    foreach ($hooks as $hook) {
+        foreach ($hooksEnabled as $hookEnabled) {
+            if ($hookEnabled->id == $hook->id) {
+                $hook->checked = true;
+            }
+        }
+    }
+    
 	// Get the files of the selected repository path.
 	$repoPathList = $engine->getRepositoryViewProvider()->listPath($oR, $varPath);
 
@@ -110,6 +129,7 @@ try {
 	SetValue("CustomWebLink", $hasCustomWebLink);
 	SetValue("ItemList", $itemList);
 	SetValue("Repository", $oR);
+	SetValue("Hooks", $hooks);
 	SetValue("BackLinkPath", $backLinkPath);
 	SetValue("BackLinkPathEncoded", rawurlencode($backLinkPath));
 	SetValue("CurrentPath", $varPath);

@@ -24,15 +24,12 @@ if( !defined('ACTION_HANDLING') ) {
 $appEngine->forwardInvalidModule( false);
 
 // Get required variables.
-$hookType = get_request_var("type");
-$hookfilename = get_request_var("hookfilename");
-$hookcontent = get_request_var("hookcontent");
+$hookType = get_request_var('type');
+$hookfilename = get_request_var('hookfilename');
+$hookcontent = get_request_var('hookcontent');
 
-if( ($hookfilename == NULL) || ($hookcontent == NULL) || ($hookType == NULL) ) {
-    //Warning invalide input
-    $appTemplate->addDefine("WARNING");
-    $appTemplate->addReplacement("WARNINGMSG",$appTR->tr('Hook Type, Name and Content must be set'));
-
+if (($hookfilename == NULL) || ($hookcontent == NULL) || ($hookType == NULL) ) {
+   $appEngine->addException(new ValidationException(tr('You have to fill out all fields.')));
 } else {
     //Create a new Hook and save it
     $hook = new \svnadmin\core\entities\Hook();
@@ -41,11 +38,9 @@ if( ($hookfilename == NULL) || ($hookcontent == NULL) || ($hookType == NULL) ) {
     $hook->type = $hookType;
 
     if (!$hook->create()) {
-        $appTemplate->addDefine('ERROR');
-        $appTemplate->addReplacement('ERRORMSG',$appTR->tr('Hook with the name "' . $hook->getTitle() . '" already exist'));
+        $appEngine->addException(new Exception(tr('Hook with the name "' . $hook->getTitle() . '" already exist')));
     } else {
-        $appTemplate->addDefine('INFO');
-        $appTemplate->addReplacement('INFOMSG',$appTR->tr('Hook "' . $hook->getTitle() . '" created!'));
+        $appEngine->addMessage(tr('Hook "' . $hook->getTitle() . '" created!'));
     }
 }
 ?>

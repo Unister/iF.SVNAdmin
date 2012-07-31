@@ -421,7 +421,14 @@ namespace svnadmin\core\acl
       }
       return $list;
     }
-
+    
+    /**
+     * Filter users repository list
+	 *
+     * @param string $username
+     * @param array $fullList
+     * @return array
+     */
     public function filterRepositoryList($username, $fullList)
     {
       $list = array();
@@ -435,6 +442,13 @@ namespace svnadmin\core\acl
       return $list;
     }
 
+    /**
+     * Filter $username out of user list
+     *
+     * @param string $username
+     * @param array $fullList
+     * @return array
+     */
     public function filterUserList($username, $fullList)
     {
         $list = array();
@@ -574,16 +588,16 @@ namespace svnadmin\core\acl
      */
     public function load()
     {
-        // Create the user-to-role file.
-        if (!file_exists($this->user_role_file))
-        {
-            // Create the file.
-            if (!touch($this->user_role_file))
-            {
-              throw new Exception("The file is not writable: ".$this->user_role_file);
-            }
-        }
-
+    	// Create the user-to-role file.
+    	if (!file_exists($this->user_role_file))
+    	{
+    		// Create the file.
+    		if (!touch($this->user_role_file))
+    		{
+    		  throw new Exception("The file is not writable: ".$this->user_role_file);
+    		}
+    	}
+    	
       // Load the default ACL object.
       $this->acl = self::getDefaultAcl();
 

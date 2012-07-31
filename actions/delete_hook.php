@@ -49,9 +49,7 @@ if( $selHooks == null )
         }
     }
 
-    $msg = implode('<br/>', $msg);
-    $appTemplate->addDefine("INFO");
-    $appTemplate->addReplacement("INFOMSG", $appTR->tr($msg));
+    $appEngine->addMessage(tr(implode('<br/>', $msg)));
 }
 
 ?>

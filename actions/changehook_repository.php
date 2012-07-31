@@ -30,8 +30,7 @@ $repo = new \svnadmin\core\entities\Repository();
 $repo->name = $repoName;
 
 if (empty($selectedHooks)) {
-    $appTemplate->addDefine('WARNING');
-    $appTemplate->addReplacement('WARNINGMSG', $appTR->tr('Plase select at least one Hook'));
+    $appEngine->addException(new Exception(tr('Plase select at least one Hook')));
 } else {
     $info = array();
     $error = array();
@@ -42,13 +41,11 @@ if (empty($selectedHooks)) {
     }
 
     if (!empty($info)) {
-        $appTemplate->addDefine('INFO');
-        $appTemplate->addReplacement('INFOMSG', $appTR->tr(implode('<br/>', $info)));
+        $appEngine->addMessage(tr(implode('<br/>', $info)));
     }
 
     if (!empty($error)) {
-        $appTemplate->addDefine('ERROR');
-        $appTemplate->addReplacement('ERRORMSG', $appTR->tr(implode('<br/>', $error)));
+        $appEngine->addException(new Exception(tr(implode('<br/>', $error))));
     }
 }
 

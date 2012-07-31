@@ -25,7 +25,7 @@
     <?php } ?>
   </tr>
 </thead>
-      
+
 <tfoot>
   <tr>
     <td>
@@ -84,5 +84,51 @@
 </tbody>
 
 </table>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $("#selectallhooks").click(function(){
+    selectAll(this, "selected_hooks[]");
+  });
+});
+</script>
+
+      <form action="repositoryview.php?pi=<?php print(GetValue("Repository")->getEncodedParentIdentifier()); ?>&amp;r=<?php print(GetValue("Repository")->getEncodedName()); ?>" method="POST">
+      <table id="hooklist" class="datatable">
+          <thead>
+              <tr>
+                    <th width="20">
+                        <input type="checkbox" id="selectallhooks" />
+                    </th>
+                    <th><?php Translate('Hook')?></th>
+                    <th><?php Translate('Author')?></th>
+                    <th><?php Translate('Type')?></th>
+              </tr>
+          </thead>
+          <tbody>
+          <?php foreach (GetValue('Hooks') as $hook) {?>
+              <tr>
+                    <td>
+                        <input type="checkbox" name="selected_hooks[]" value="<?php print($hook->getId())?>" <?php print($hook->getChecked())?>>
+                    </td>
+                    <td><a href="hookview.php?h=<?php print($hook->getId())?>"><?php print($hook->getTitle())?></a></td>
+                    <td><?php print($hook->getAuthor())?></td>
+                    <td><?php print($hook->getType())?></td>
+              </tr>
+        <?php } ?>
+          </tbody>
+          <tfoot>
+            <tr>
+                <td colspan="4">
+                <?php if (HasAccess(ACL_MOD_HOOKS, ACL_ACTION_ASSIGN)) {?>
+                    <input type="submit" name="changeHook" value="Update hooks" onclick="return deletionPrompt('<?php Translate('Are you sure?')?>');">
+                <?php }?>
+                </td>
+            </tr>
+          </tfoot>
+      </table>
+    <br/>
+
+    </form>
 
 <?php GlobalFooter(); ?>

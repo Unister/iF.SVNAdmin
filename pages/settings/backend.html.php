@@ -29,6 +29,10 @@ $(document).ready(function(){
   $('#SvnAdminExecutableTest').click(function(){
     testSettings("SvnAdminExecutable", {SvnAdminExecutable: $("#SvnAdminExecutable").val()}, "#SvnAdminExecutableTestResult");
   });
+  
+  $('#SvnHookpathTest').click(function(){
+	    testSettings("SvnHookpath", {SvnHookpath: $("#SvnHookpath").val()}, "#SvnHookpathTestResult");
+  });
 
   $('#LdapConnectTest').click(function(){
     testSettings("LdapConnection",
@@ -250,6 +254,14 @@ $(document).ready(function(){
         <input type="text" name="SvnAdminExecutable" id="SvnAdminExecutable" value="<?php PrintStringValue("SvnAdminExecutable"); ?>">
         <input type="button" id="SvnAdminExecutableTest" value="<?php Translate("Test"); ?>">
         <span id="SvnAdminExecutableTestResult" style="display:none;"></span>
+      </td>
+    </tr>
+    <tr>
+      <td><?php Translate("Hookpath"); ?><br><small><b><?php Translate("Example"); ?>:</b> <?php PrintStringValue("SvnAdminExecutableEx"); ?></small></td>
+      <td>
+        <input type="text" name="SvnHookpath" id="SvnHookpath" value="<?php PrintStringValue("SvnHookpath"); ?>">
+        <input type="button" id="SvnHookpathTest" value="<?php Translate("Test"); ?>">
+        <span id="SvnHookpathTestResult" style="display:none;"></span>
       </td>
     </tr>
   </tbody>

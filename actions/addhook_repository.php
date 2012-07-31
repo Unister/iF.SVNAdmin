@@ -18,7 +18,7 @@
  * along with this program.
  */
 if( !defined('ACTION_HANDLING') ) {
-  die("HaHa!");
+  die('HaHa!');
 }
 
 $selectedHooks = get_request_var('selected_hooks');
@@ -35,30 +35,25 @@ if (!empty($selectedRepos) && !empty($selectedHooks)) {
     $info = array();
     $error = array();
 
-    if (!empty($selectedHooks)) {
-        foreach ($selectedRepos as $currentRepo) {
-            $repo->setName($currentRepo);
+    foreach ($selectedRepos as $currentRepo) {
+        $repo->setName($currentRepo);
 
-            if ($repo->addHooks($selectedHooks)) {
-                $info[] = 'Done writing Hook on "' . $currentRepo . '"';
-            } else {
-                $error[] = 'Error while writing in Repository "' . $currentRepo . '"';
-            }
+        if ($repo->addHooks($selectedHooks)) {
+            $info[] = 'Done writing Hook on "' . $currentRepo . '"';
+        } else {
+            $error[] = 'Error while writing in Repository "' . $currentRepo . '"';
         }
     }
 
     if (!empty($error)) {
-        $appTemplate->addDefine('ERROR');
-        $appTemplate->addReplacement('ERRORMSG', $appTR->tr(implode('<br/>', $error)));
+        $appEngine->addException(new Exception(tr(implode('<br/>', $error))));
     }
 
     if (!empty($info)) {
-        $appTemplate->addDefine('INFO');
-        $appTemplate->addReplacement('INFOMSG', $appTR->tr(implode('<br/>', $info)));
+        $appEngine->addMessage(tr(implode('<br/>', $info)));
     }
 } else {
-    $appTemplate->addDefine('WARNING');
-    $appTemplate->addReplacement('WARNINGMSG', $appTR->tr('Please select hook and repository'));
+    $appEngine->addException(new Exception(tr('Please select hook and repository')));
 }
 
 ?>

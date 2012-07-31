@@ -70,6 +70,7 @@ include_once($ifcorelib_path."IF_ACL.class.php");
 
 // Core interfaces and classes.
 include_once( "./classes/core/entities/Permission.class.php" );
+include_once( "./classes/core/entities/Hook.class.php" );
 include_once( "./classes/core/entities/Group.class.php" );
 include_once( "./classes/core/entities/User.class.php" );
 include_once( "./classes/core/entities/AccessPath.class.php" );
@@ -98,7 +99,7 @@ include_once( "./classes/core/Exceptions.class.php" );
  */
 define("MAJOR_VERSION", "1");
 define("MINOR_VERSION", "6.1");
-define("VERSION_EXTRA", "");
+define("VERSION_EXTRA", "Unister");
 
 /**
  * Constant ACL modules.
@@ -189,7 +190,7 @@ elseif ($cfg->getValue("Engine:Providers", "UserViewProviderType") == "ldap")
 {
 	$userView = null;
 	include_once("./classes/providers/ldap/LdapUserViewProvider.class.php");
-  
+
 	if ($cfg->getValueAsBoolean('Ldap', 'CacheEnabled', false)) {
 		include_once("./classes/providers/ldap/CachedLdapUserViewProvider.class.php");
 		include_once("./include/ifcorelib/IF_JsonObjectStorage.class.php");
@@ -235,7 +236,7 @@ elseif($cfg->getValue("Engine:Providers", "GroupViewProviderType") == "ldap" && 
 	$groupView = null;
 	include_once("./classes/providers/ldap/LdapUserViewProvider.class.php");
 	include_once("./classes/providers/AuthFileGroupAndPathsProvider.class.php");
-	
+
 	if ($cfg->getValueAsBoolean('Ldap', 'CacheEnabled', false)) {
 		include_once("./classes/providers/ldap/CachedLdapUserViewProvider.class.php");
 		include_once("./include/ifcorelib/IF_JsonObjectStorage.class.php");
@@ -244,7 +245,7 @@ elseif($cfg->getValue("Engine:Providers", "GroupViewProviderType") == "ldap" && 
 	else {
 		$groupView = \svnadmin\providers\ldap\LdapUserViewProvider::getInstance();
 	}
-	
+
 	$appEngine->setGroupViewProvider($groupView);
 }
 

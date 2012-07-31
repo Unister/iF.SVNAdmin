@@ -32,7 +32,7 @@ if ($appEngine->isAuthenticationActive())
 {
   $u=new \svnadmin\core\entities\User();
   $u->name=$appEngine->getSessionUsername();
-  
+
   $roles=$appEngine->getAclManager()->getRolesOfUser($u);
   sort($roles);
 }

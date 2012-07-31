@@ -45,20 +45,17 @@ if (!empty($selectedRepos) && !empty($selectedHooks)) {
             if ($message) {
                 $info[] = $message;
             } else {
-                $error[] = 'Fail to removing pre- and postcommit hooks from "' . $repo->getName().'"';
+                $error[] = 'Fail to removing pre- and postcommit hooks from "' . $repo->getName() . '"';
             }
         }
     }
     if (!empty($info)) {
-        $appTemplate->addDefine('INFO');
-        $appTemplate->addReplacement('INFOMSG', $appTR->tr(implode('<br/>', $info)));
+        $appEngine->addMessage(tr(implode('<br/>', $info)));
     }
     if (!empty($error)) {
-        $appTemplate->addDefine('ERROR');
-        $appTemplate->addReplacement('ERRORMSG', $appTR->tr(implode('<br/>', $error)));
+        $appEngine->addException(new Exception(tr(implode('<br/>', $error))));
     }
 } else {
-    $appTemplate->addDefine('WARNING');
-    $appTemplate->addReplacement('WARNINGMSG', $appTR->tr('Plase select at least one repository and hook'));
+    $appEngine->addException(new Exception(tr('Plase select at least one repository and hook')));
 }
 ?>

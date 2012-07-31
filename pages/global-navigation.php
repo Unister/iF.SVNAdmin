@@ -12,6 +12,15 @@
     </li>
     <?php } ?>
 
+    <?php if (HasAccess(ACL_MOD_HOOKS, ACL_ACTION_VIEW)) {?>
+    <li><a href="hooklist.php"><?php Translate("Hookmanagment"); ?></a>
+        <ul class="ddm-sub">
+            <li><a href="hooklist.php"><?php Translate("List"); ?></a></li>
+            <?php if (HasAccess(ACL_MOD_HOOKS, ACL_ACTION_ADD)) {?><li><a href="hookcreate.php"><?php Translate("Add"); ?></a></li><?php }?>
+        </ul>
+    </li>
+    <?php }?>
+
     <?php if (IsProviderActive(PROVIDER_USER_VIEW) && (HasAccess(ACL_MOD_USER, ACL_ACTION_VIEW) || HasAccess(ACL_MOD_USER, ACL_ACTION_ADD))) { ?>
     <li><a href="userlist.php"><?php Translate("Users"); ?></a>
       <ul class="ddm-sub">
@@ -40,6 +49,7 @@
       </ul>
     </li>
     <?php } ?>
+
 
     <?php if (IsViewUpdateable() && HasAccess(ACL_MOD_UPDATE, ACL_ACTION_SYNCHRONIZE) && AppEngine()->getConfig()->getValueAsBoolean('GUI', 'AllowUpdateByGui', true)) {?>
     <li><a href="update.php"><?php Translate("Update"); ?></a>

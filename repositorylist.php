@@ -26,7 +26,7 @@ include("include/config.inc.php");
 $engine = \svnadmin\core\Engine::getInstance();
 
 if (!$engine->isProviderActive(PROVIDER_REPOSITORY_VIEW)) {
-	$engine->forwardError(ERROR_INVALID_MODULE);
+    $engine->forwardError(ERROR_INVALID_MODULE);
 }
 
 $engine->checkUserAuthentication(true, ACL_MOD_REPO, ACL_ACTION_VIEW);
@@ -37,15 +37,19 @@ $appTR->loadModule("repositorylist");
 //
 
 if (check_request_var("delete")) {
-	$engine->handleAction("delete_repository");
+    $engine->handleAction("delete_repository");
 }
 else if (check_request_var('dump')) {
-	$engine->handleAction('dump_repository');
-	exit(0);
+    $engine->handleAction('dump_repository');
+    exit(0);
+} else if (check_request_var('addHooks')) {
+    $appEngine->handleAction("addhook_repository");
+} else if (check_request_var('deleteHooks')) {
+    $appEngine->handleAction('deletehook_repository');
 }
 else if (check_request_var('load')) {
-	
-	exit(0);
+
+    exit(0);
 }
 
 //
@@ -54,31 +58,40 @@ else if (check_request_var('load')) {
 
 $repositoryParentList = array();
 $repositoryList = array();
+$hook =  new \svnadmin\core\entities\Hook();
+$hookList = $hook->getHookList();
 try {
-	// Repository parent locations.
-	$repositoryParentList = $engine->getRepositoryViewProvider()->getRepositoryParents();
-	
-	// Repositories of all locations.
-	foreach ($repositoryParentList as $rp) {
-		$repositoryList[$rp->identifier] = $engine->getRepositoryViewProvider()->getRepositoriesOfParent($rp);
-		usort($repositoryList[$rp->identifier], array('\svnadmin\core\entities\Repository', 'compare'));
-	}
-	
-	// Show options column?
-	if (($engine->isProviderActive(PROVIDER_REPOSITORY_EDIT)
-		&& $engine->hasPermission(ACL_MOD_REPO, ACL_ACTION_DUMP)
-		&& $engine->getConfig()->getValueAsBoolean('GUI', 'RepositoryDumpEnabled', false))
-		){
-		SetValue('ShowOptions', true);
-		SetValue('ShowDumpOption', true);
-	}
+
+    // Repository parent locations.
+    $repositoryParentList = $engine->getRepositoryViewProvider()->getRepositoryParents();
+
+    // Filtern der Repositories, wenn der User kein Admin ist
+    if (!$appEngine->getAclManager()->userHasRole($appEngine->getSessionUsername(), 'Administrator')) {
+        $repositoryParentList = $appEngine->getAclManager()->filterRepositoryList($appEngine->getSessionUsername(), $repositoryParentList);
+    }
+
+    // Repositories of all locations.
+    foreach ($repositoryParentList as $rp) {
+        $repositoryList[$rp->identifier] = $engine->getRepositoryViewProvider()->getRepositoriesOfParent($rp);
+        usort($repositoryList[$rp->identifier], array('\svnadmin\core\entities\Repository', 'compare'));
+    }
+
+    // Show options column?
+    if (($engine->isProviderActive(PROVIDER_REPOSITORY_EDIT)
+        && $engine->hasPermission(ACL_MOD_REPO, ACL_ACTION_DUMP)
+        && $engine->getConfig()->getValueAsBoolean('GUI', 'RepositoryDumpEnabled', false))
+    ) {
+        SetValue('ShowOptions', true);
+        SetValue('ShowDumpOption', true);
+    }
 }
 catch (Exception $ex) {
-	$engine->addException($ex);
+    $engine->addException($ex);
 }
 
 SetValue('RepositoryParentList', $repositoryParentList);
 SetValue('RepositoryList', $repositoryList);
+SetValue('Hooks', array_merge($hookList['precommit'], $hookList['postcommit']));
 SetValue('ShowDeleteButton', $engine->getConfig()->getValueAsBoolean('GUI', 'RepositoryDeleteEnabled', true));
 ProcessTemplate('repository/repositorylist.html.php');
 ?>
