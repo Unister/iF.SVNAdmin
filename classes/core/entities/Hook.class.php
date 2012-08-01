@@ -87,8 +87,10 @@ use svnadmin\core\Engine;
             $this->id = $id;
             list($this->type, $this->filename) = explode('_', $id);
 
-            $this->content = file_get_contents($this->getFilename());
-            $this->_parseMeta($this->content);
+            if (is_file($this->getFilename())) {
+                $this->content = file_get_contents($this->getFilename());
+                $this->_parseMeta($this->content);
+            }
         }
     }
 

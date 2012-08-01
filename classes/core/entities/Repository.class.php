@@ -369,6 +369,21 @@ class Repository
         return $hooks;
     }
 
+    /**
+     * Update hook list of this repository
+     *
+     * @param unknown_type $hookList
+     * @return boolean
+     */
+    public function updateHooks($hookList)
+    {
+        foreach ($this->getLoadedHooks() as $loadedHook) {
+            $this->removeHook($loadedHook);
+        }
+
+        return $this->addHooks($hookList);
+    }
+
     public static function compare( $o1, $o2 )
     {
         if ($o1->name == $o2->name) {

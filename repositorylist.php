@@ -65,16 +65,17 @@ try {
     // Repository parent locations.
     $repositoryParentList = $engine->getRepositoryViewProvider()->getRepositoryParents();
 
-    // Filtern der Repositories, wenn der User kein Admin ist
-    if (!$appEngine->getAclManager()->userHasRole($appEngine->getSessionUsername(), 'Administrator')) {
-        $repositoryParentList = $appEngine->getAclManager()->filterRepositoryList($appEngine->getSessionUsername(), $repositoryParentList);
-    }
-
     // Repositories of all locations.
     foreach ($repositoryParentList as $rp) {
         $repositoryList[$rp->identifier] = $engine->getRepositoryViewProvider()->getRepositoriesOfParent($rp);
         usort($repositoryList[$rp->identifier], array('\svnadmin\core\entities\Repository', 'compare'));
     }
+
+    //Only show users repositories
+    if (!$appEngine->getAclManager()->userHasRole($appEngine->getSessionUsername(), 'Administrator')) {
+        $repositoryList = $appEngine->getAclManager()->filterRepositoryList($appEngine->getSessionUsername(), $repositoryList);
+    }
+
 
     // Show options column?
     if (($engine->isProviderActive(PROVIDER_REPOSITORY_EDIT)

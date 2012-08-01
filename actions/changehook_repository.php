@@ -32,22 +32,10 @@ $repo->name = $repoName;
 if (empty($selectedHooks)) {
     $appEngine->addException(new Exception(tr('Plase select at least one Hook')));
 } else {
-    $info = array();
-    $error = array();
-    if ($repo->addHooks($selectedHooks, true)) {
-        $info[] = 'Done writing hooks on "' . $repo->name . '"';
+    if ($repo->updateHooks($selectedHooks)) {
+        $appEngine->addMessage(tr('Done writing hooks on "' . $repo->name . '"'));
     } else {
-        $error[] = 'Fail to write hooks on "'. $repo->name . '"';
-    }
-
-    if (!empty($info)) {
-        $appEngine->addMessage(tr(implode('<br/>', $info)));
-    }
-
-    if (!empty($error)) {
-        $appEngine->addException(new Exception(tr(implode('<br/>', $error))));
+        $appEngine->addException(new Exception(tr('Fail to write hooks on "' . $repo->name . '"')));
     }
 }
-
-
 ?>

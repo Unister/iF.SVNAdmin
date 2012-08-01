@@ -432,12 +432,12 @@ namespace svnadmin\core\acl
     public function filterRepositoryList($username, $fullList)
     {
       $list = array();
-      foreach ($fullList as &$pathObj)
-      {
-        if (self::isUserAdminOfPath($username, $pathObj->name . ':/'))
-        {
-          $list[] = $pathObj;
-        }
+      foreach ($fullList as $parrentKey => $repoList) {
+          foreach ($repoList as $repo) {
+              if (self::isUserAdminOfPath($username, $repo->name . ':/')) {
+                  $list[$parrentKey][] = $repo;
+              }
+          }
       }
       return $list;
     }
